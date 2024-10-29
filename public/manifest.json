@@ -1,12 +1,20 @@
 {
+  "background": {
+    "scripts": ["background.js"]
+  },
   "manifest_version": 3,
   "version": "1.0.0",
-  "short_name": "React App",
+  "short_name": "Sorigil",
+  "description": "Sorigil - Screen Reader Extension",
   "name": "Sorigil",
+  "permissions": ["storage", "tts", "tabs", "activeTab"],
+  "icons": {
+    "128": "128.png"
+  },
   "action": {
     "default_popup": "index.html"
   },
-  "start_url": ".",
+  "host_permissions": ["<all_urls>"],
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"

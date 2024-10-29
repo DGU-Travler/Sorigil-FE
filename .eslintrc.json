@@ -1,0 +1,72 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+    "prettier"
+  ],
+  "plugins": ["react", "@typescript-eslint", "react-hooks", "prettier"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2021,
+    "sourceType": "module"
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "no-unused-vars": "warn",
+    "prettier/prettier": ["error", {}, { "usePrettierrc": true }]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "globals": {
+    "chrome": "readonly"
+  }
+}
+
+/*
+1. `"extends": [...]`:
+   - 이 배열은 ESLint가 사용할 기본 규칙 세트를 정의합니다.
+   - "eslint:recommended": ESLint의 권장 규칙을 사용합니다.
+   - "plugin:react/recommended": React 관련 권장 규칙을 적용합니다.
+   - "plugin:@typescript-eslint/recommended": TypeScript 관련 권장 규칙을 적용합니다.
+   - "plugin:react-hooks/recommended": React Hooks 관련 권장 규칙을 적용합니다.
+   - "plugin:prettier/recommended": Prettier와 ESLint의 충돌을 방지하고 Prettier 규칙을 ESLint에 통합합니다.
+
+2. `"plugins": [...]`:
+   - 사용할 ESLint 플러그인을 나열합니다.
+   - "react": React 관련 규칙을 제공합니다.
+   - "@typescript-eslint": TypeScript 관련 규칙을 제공합니다.
+   - "react-hooks": React Hooks 관련 규칙을 제공합니다.
+   - "prettier": Prettier 관련 규칙을 ESLint에 통합합니다.
+
+3. `"parser": "@typescript-eslint/parser"`:
+   - TypeScript 코드를 파싱하기 위해 @typescript-eslint/parser를 사용합니다.
+
+4. `"parserOptions": {...}`:
+   - 파서에 대한 추가 옵션을 설정합니다.
+   - "ecmaFeatures": { "jsx": true }: JSX 문법 지원을 활성화합니다.
+   - "ecmaVersion": 2021: ECMAScript 2021 문법을 지원합니다.
+   - "sourceType": "module": ES 모듈 시스템을 사용합니다.
+
+5. `"rules": {...}`:
+   - 특정 ESLint 규칙을 커스터마이즈합니다.
+   - "react/react-in-jsx-scope": "off": React 17 이상에서는 JSX 사용 시 React를 import 할 필요가 없어 이 규칙을 비활성화합니다.
+   - "react/prop-types": "off": TypeScript를 사용하므로 prop-types 검사를 비활성화합니다.
+   - "@typescript-eslint/explicit-module-boundary-types": "off": 함수 반환 타입을 명시적으로 선언하지 않아도 되게 합니다.
+   - "no-unused-vars": "warn": 사용하지 않는 변수에 대해 경고만 표시합니다.
+   - "prettier/prettier": "error": Prettier 규칙 위반을 오류로 처리합니다.
+
+6. `"settings": { "react": { "version": "detect" } }`:
+   - React 버전을 자동으로 감지하도록 설정합니다. 이는 React 관련 규칙이 올바르게 적용되도록 합니다.
+
+이 설정은 React와 TypeScript를 사용하는 프로젝트에 대해 강력한 린팅 규칙을 제공하며, Prettier와의 통합을 통해 일관된 코드 스타일을 유지할 수 있게 해줍니다.
+*/
