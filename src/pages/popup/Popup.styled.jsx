@@ -19,5 +19,4 @@ export const MenuButton = styled.button`
     background-color: var(--gray2);
   }
   white-space: nowrap;
-  font-family: 'pretendard', sans-serif;
 `;
