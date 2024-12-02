@@ -16,6 +16,9 @@ function highlightElement(element) {
 
   // 포커스 시 기본 outline 제거
   element.style.outline = 'none'; // 기본 outline 제거
+
+  // 동적 콘텐츠를 읽도록 설정
+  startObserving(element);
 }
 
 // 요소의 텍스트를 TTS로 읽기
@@ -69,3 +72,37 @@ document.addEventListener('input', (event) => {
     chrome.runtime.sendMessage({ text: element.value }); // 입력값 TTS로 읽기
   }
 });
+
+// 동적 콘텐츠 안내
+const observer = new MutationObserver((mutationsList, observer) => {
+  mutationsList.forEach((mutation) => {
+    if (lastFocusedElement && lastFocusedElement.contains(mutation.target)) {
+      if (mutation.type === 'childList') {
+        mutation.addedNodes.forEach((addedNode) => {
+          if (addedNode.nodeType === 1) {
+            const text = findReadableText(addedNode);
+            if (text && text !== '읽을 수 있는 텍스트가 없습니다.') {
+              chrome.runtime.sendMessage({ text });
+            }
+          }
+        });
+      } else if (mutation.type === 'characterData') {
+        const text = findReadableText(mutation.target);
+        if (text && text !== '읽을 수 있는 텍스트가 없습니다.') {
+          chrome.runtime.sendMessage({ text });
+        }
+      }
+    }
+  });
+});
+
+// 동적 콘텐츠 감지
+function startObserving(element) {
+  if (element) {
+    observer.observe(element, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+  }
+}
