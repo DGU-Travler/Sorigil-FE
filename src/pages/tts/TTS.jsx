@@ -1,14 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import sorigilLogo from '../../assets/images/Sorigil-logo.svg';
 import * as S from './TTS.styled';
 
 function TTS() {
   const [speed, setSpeed] = useState(50);
   const [isToggled, setIsToggled] = useState(false);
-  const [voice, setVoice] = useState('유나');
+  const [voice, setVoice] = useState('');
   const [language, setLanguage] = useState('한국어');
   const [ton, setTon] = useState(50);
   const [volume, setVolume] = useState(50);
+  const [voices, setVoices] = useState([]);
+
+  // 음성 목록 가져오기
+  const getVoices = () => {
+    const synth = window.speechSynthesis;
+    let voicesList = synth.getVoices();
+
+    if (voicesList.length === 0) {
+      synth.onvoiceschanged = () => {
+        voicesList = synth.getVoices();
+        setVoices(voicesList.filter((voice) => voice.lang.startsWith('ko'))); // 한국어 음성만 필터링
+      };
+    } else {
+      setVoices(voicesList.filter((voice) => voice.lang.startsWith('ko')));
+    }
+  };
+
+  useEffect(() => {
+    getVoices();
+  }, []);
 
   const getBackgroundStyle = (value) => {
     return `linear-gradient(
@@ -47,21 +67,25 @@ function TTS() {
             </S.Switch>
           </S.SubContainer>
           <S.SubContainer>
-            <label htmlFor="language">목소리</label>
+            <label htmlFor="voice">목소리</label>
             <select value={voice} onChange={(e) => setVoice(e.target.value)}>
-              <option value="option1">유나</option>
-              <option value="option2">옵션 2</option>
-              <option value="option3">옵션 3</option>
+              {voices.map((voiceOption) => (
+                <option key={voiceOption.name} value={voiceOption.name}>
+                  {voiceOption.name} - {voiceOption.lang}
+                </option>
+              ))}
             </select>
           </S.SubContainer>
+
           <S.SubContainer>
-            <label htmlFor="speed">언어</label>
+            <label htmlFor="language">언어</label>
             <select value={language} onChange={(e) => setLanguage(e.target.value)}>
               <option value="option1">한국어</option>
               <option value="option2">옵션 2</option>
               <option value="option3">옵션 3</option>
             </select>
           </S.SubContainer>
+
           <S.SliderContainer>
             <label htmlFor="speed">속도</label>
             <input
@@ -74,8 +98,9 @@ function TTS() {
               style={{ background: getBackgroundStyle(speed) }}
             />
           </S.SliderContainer>
+
           <S.SliderContainer>
-            <label htmlFor="tom">음조</label>
+            <label htmlFor="ton">음조</label>
             <input
               type="range"
               min="0"
@@ -86,8 +111,9 @@ function TTS() {
               style={{ background: getBackgroundStyle(ton) }}
             />
           </S.SliderContainer>
+
           <S.SliderContainer>
-            <label htmlFor="volumn">볼륨</label>
+            <label htmlFor="volume">볼륨</label>
             <input
               type="range"
               min="0"
@@ -103,4 +129,5 @@ function TTS() {
     </S.Container>
   );
 }
+
 export default TTS;
