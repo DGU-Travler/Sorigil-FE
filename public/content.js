@@ -35,6 +35,7 @@ function findReadableText(element) {
 }
 function readText(element) {
   const text =
+    element.value ||
     element.innerText ||
     element.alt ||
     element.title ||
@@ -59,4 +60,12 @@ document.addEventListener('focusin', (event) => {
   const element = event.target;
   highlightElement(element); // 하이라이트 적용
   readText(element); // TTS로 텍스트 읽기
+});
+
+// 폼 필드 입력 음성 안내
+document.addEventListener('input', (event) => {
+  const element = event.target;
+  if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+    chrome.runtime.sendMessage({ text: element.value }); // 입력값 TTS로 읽기
+  }
 });
