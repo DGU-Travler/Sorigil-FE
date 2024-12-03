@@ -44,8 +44,8 @@ function readText(element) {
     element.alt ||
     element.title ||
     element.placeholder ||
-    element.ariaLabel ||
-    '읽을 수 있는 텍스트가 없습니다.';
+    element.ariaLabel; // ||
+  //'읽을 수 있는 텍스트가 없습니다.';
   if (text) {
     chrome.runtime.sendMessage({ text }); // background.js에 텍스트 전송
   }
@@ -104,5 +104,77 @@ function startObserving(element) {
       subtree: true,
       characterData: true,
     });
+  }
+}
+
+document.addEventListener('click', async (event) => {
+  const element = event.target;
+
+  // 이미지인지 확인
+  if (element.tagName === 'IMG') {
+    const altText = element.alt || element.title || '읽을 수 있는 텍스트가 없습니다.';
+
+    if (altText === '읽을 수 있는 텍스트가 없습니다.') {
+      // 대체 텍스트가 없으면 이미지를 백엔드로 전송하여 처리
+      const imageURL = element.src;
+
+      try {
+        const { best_caption, translated_caption } = await sendImageToBackend(imageURL);
+        if (best_caption) {
+          chrome.runtime.sendMessage({ text: best_caption });
+        } else {
+          console.error('best_caption이 생성되지 않았습니다.');
+        }
+
+        // translated_caption이 있을 경우 TTS로 읽기
+        if (translated_caption) {
+          chrome.runtime.sendMessage({ text: translated_caption });
+        } else {
+          console.error('translated_caption이 생성되지 않았습니다.');
+        }
+
+        // 만약 두 개의 텍스트가 모두 없으면 안내
+        if (!best_caption && !translated_caption) {
+          chrome.runtime.sendMessage({ text: '이미지 대체 텍스트를 생성할 수 없습니다.' });
+        }
+      } catch (error) {
+        console.error('이미지 대체 텍스트 생성 실패:', error);
+        chrome.runtime.sendMessage({ text: '이미지 대체 텍스트를 생성할 수 없습니다.' }); // TTS로 안내
+      }
+    } else {
+      chrome.runtime.sendMessage({ text: altText }); // 기존 alt 텍스트 읽기
+    }
+  } else {
+    readText(element); // 일반 텍스트 요소 읽기
+  }
+});
+
+// 이미지 URL을 백엔드로 전송하는 함수
+async function sendImageToBackend(imageURL) {
+  try {
+    const response = await fetch(imageURL);
+    const blob = await response.blob();
+
+    const formData = new FormData();
+    formData.append('image', blob, 'image.jpg');
+
+    // 백엔드 API 호출
+    const result = await fetch('http://127.0.0.1:8000/api/analyze/', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!result.ok) {
+      throw new Error('이미지 대체 텍스트 생성 API 호출 실패');
+    }
+
+    const data = await result.json();
+    return {
+      best_caption: data.best_caption, // 원본 텍스트 (best_caption)
+      translated_caption: data.translated_caption, // 번역된 텍스트 (translated_caption)
+    };
+  } catch (error) {
+    console.error('백엔드 호출 중 오류 발생:', error);
+    throw new Error('이미지 대체 텍스트 생성 API 호출 실패');
   }
 }
