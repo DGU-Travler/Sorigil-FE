@@ -36,6 +36,7 @@ function findReadableText(element) {
   }
   return '읽을 수 있는 텍스트가 없습니다.';
 }
+
 function readText(element) {
   const text =
     element.value ||
@@ -44,7 +45,6 @@ function readText(element) {
     element.title ||
     element.placeholder ||
     element.ariaLabel ||
-    element.value ||
     '읽을 수 있는 텍스트가 없습니다.';
   if (text) {
     chrome.runtime.sendMessage({ text }); // background.js에 텍스트 전송
