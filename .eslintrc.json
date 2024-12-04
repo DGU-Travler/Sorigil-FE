@@ -29,11 +29,6 @@
   },
   "globals": {
     "chrome": "readonly"
-  },
-  "env": {
-    "browser": true, // document, window 허용
-    "node": true, // process 등 허용
-    "es6": true // ES6 문법 허용
   }
 }
 

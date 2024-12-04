@@ -1,5 +1,3 @@
-import { defaultInstance } from '../src/api/instance';
-import { sendRequest } from '../src/api/request';
 // 마지막으로 포커스된 요소를 추적
 let lastFocusedElement = null;
 
@@ -201,28 +199,25 @@ document.addEventListener('click', async (event) => {
 async function sendImageToBackend(imageURL) {
   try {
     // 외부 이미지를 프록시 서버를 통해 요청
-    const response = await sendRequest(
-      defaultInstance,
-      'get',
-      `/proxy-image/?url=${encodeURIComponent(imageURL)}`,
-      {},
-      {
-        responseType: 'blob',
-      }
-    );
+    const proxiedImageURL = `http://127.0.0.1:8000/api/proxy-image/?url=${encodeURIComponent(imageURL)}`;
+
+    const response = await fetch(proxiedImageURL);
     const blob = await response.blob();
 
     const formData = new FormData();
     formData.append('image', blob, 'image.jpg');
 
     // 백엔드 API 호출
-    const result = await sendRequest(defaultInstance, 'post', `/analyze/`, formData);
+    const result = await fetch('http://127.0.0.1:8000/api/analyze/', {
+      method: 'POST',
+      body: formData,
+    });
 
     if (!result.ok) {
       throw new Error('이미지 대체 텍스트 생성 API 호출 실패');
     }
 
-    const data = await result.data;
+    const data = await result.json();
     return data.translated_caption;
   } catch (error) {
     console.error('백엔드 호출 중 오류 발생:', error);
