@@ -18,6 +18,26 @@
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff",
+  "commands": {
+    "start-voice-command": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+X"
+      },
+      "description": "Start voice recognition"
+    },
+    "increase-volume": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+1"
+      },
+      "description": "Volume up"
+    },
+    "decrease-volume": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+2"
+      },
+      "description": "Volume down"
+    }
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

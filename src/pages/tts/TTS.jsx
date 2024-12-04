@@ -3,12 +3,12 @@ import sorigilLogo from '../../assets/images/Sorigil-logo.svg';
 import * as S from './TTS.styled';
 
 function TTS() {
-  const [speed, setSpeed] = useState(50);
+  const [speed, setSpeed] = useState(1);
   const [isToggled, setIsToggled] = useState(false);
   const [voice, setVoice] = useState('');
   const [language, setLanguage] = useState('한국어');
-  const [ton, setTon] = useState(50);
-  const [volume, setVolume] = useState(50);
+  const [ton, setTon] = useState(1);
+  const [volume, setVolume] = useState(0.5);
   const [voices, setVoices] = useState([]);
 
   // chrome.tts에서 사용할 수 있는 음성 목록 호출
@@ -83,7 +83,7 @@ function TTS() {
 
     chrome.runtime.sendMessage({
       type: 'setRate',
-      rate: newSpeed / 10,
+      rate: newSpeed,
     });
   };
 
@@ -96,7 +96,7 @@ function TTS() {
 
     chrome.runtime.sendMessage({
       type: 'setPitch',
-      pitch: newTon / 50,
+      pitch: newTon,
     });
   };
 
@@ -109,7 +109,7 @@ function TTS() {
 
     chrome.runtime.sendMessage({
       type: 'setVolume',
-      volume: newVolume / 100,
+      volume: newVolume,
     });
   };
 
@@ -123,8 +123,18 @@ function TTS() {
     return `linear-gradient(
       to right,
       #F7C800 0%,
-      #F7C800 ${value}%,
-      #E4E4E4 ${value}%,
+      #F7C800 ${value * 20}%,
+      #E4E4E4 ${value * 20}%,
+      #E4E4E4 100%
+    )`;
+  };
+
+  const getVolumeBackgroundStyle = (value) => {
+    return `linear-gradient(
+      to right,
+      #F7C800 0%,
+      #F7C800 ${value * 100}%,
+      #E4E4E4 ${value * 100}%,
       #E4E4E4 100%
     )`;
   };
@@ -175,8 +185,8 @@ function TTS() {
             <input
               type="range"
               min="0"
-              max="100"
-              step="1"
+              max="5"
+              step="0.1"
               value={speed}
               onChange={handleSpeedChange}
               style={{ background: getBackgroundStyle(speed) }}
@@ -188,8 +198,8 @@ function TTS() {
             <input
               type="range"
               min="0"
-              max="100"
-              step="1"
+              max="5"
+              step="0.1"
               value={ton}
               onChange={handleTonChange}
               style={{ background: getBackgroundStyle(ton) }}
@@ -201,11 +211,11 @@ function TTS() {
             <input
               type="range"
               min="0"
-              max="100"
-              step="1"
+              max="1"
+              step="0.1"
               value={volume}
               onChange={handleVolumeChange}
-              style={{ background: getBackgroundStyle(volume) }}
+              style={{ background: getVolumeBackgroundStyle(volume) }}
             />
           </S.SliderContainer>
         </S.SettingContent>
