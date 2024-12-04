@@ -1,14 +1,123 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import sorigilLogo from '../../assets/images/Sorigil-logo.svg';
 import * as S from './TTS.styled';
 
 function TTS() {
   const [speed, setSpeed] = useState(50);
   const [isToggled, setIsToggled] = useState(false);
-  const [voice, setVoice] = useState('유나');
+  const [voice, setVoice] = useState('');
   const [language, setLanguage] = useState('한국어');
   const [ton, setTon] = useState(50);
   const [volume, setVolume] = useState(50);
+  const [voices, setVoices] = useState([]);
+
+  // chrome.tts에서 사용할 수 있는 음성 목록 호출
+  const getVoices = () => {
+    const synth = window.speechSynthesis;
+    let voicesList = synth.getVoices();
+
+    // 음성이 로드되었는지 확인 후 목록을 업데이트
+    if (voicesList.length === 0) {
+      synth.onvoiceschanged = () => {
+        voicesList = synth.getVoices();
+        setVoices(
+          voicesList.filter((voice) => voice.lang.startsWith('ko') || voice.lang.startsWith('en'))
+        );
+      };
+    } else {
+      setVoices(
+        voicesList.filter((voice) => voice.lang.startsWith('ko') || voice.lang.startsWith('en'))
+      );
+    }
+  };
+
+  useEffect(() => {
+    getVoices();
+
+    // 로컬 스토리지에서 저장된 설정을 불러오기
+    chrome.storage.sync.get(
+      ['voice', 'speed', 'ton', 'volume', 'isToggled', 'language'],
+      (result) => {
+        if (result.voice) setVoice(result.voice);
+        if (result.speed) setSpeed(result.speed);
+        if (result.ton) setTon(result.ton);
+        if (result.volume) setVolume(result.volume);
+        if (result.isToggled !== undefined) setIsToggled(result.isToggled);
+        if (result.language) setLanguage(result.language);
+      }
+    );
+  }, []);
+
+  // 음성 변경
+  const handleVoiceChange = (e) => {
+    const selectedVoice = voices.find((v) => v.name === e.target.value);
+    setVoice(selectedVoice.name);
+
+    chrome.storage.sync.set({ voice: selectedVoice.name });
+
+    chrome.runtime.sendMessage({
+      type: 'setVoice',
+      voice: selectedVoice.name,
+    });
+  };
+
+  // 언어 변경
+  const handleLanguageChange = (e) => {
+    const selectedLanguage = e.target.value;
+    setLanguage(selectedLanguage);
+
+    chrome.storage.sync.set({ language: selectedLanguage });
+
+    chrome.runtime.sendMessage({
+      type: 'setLanguage',
+      language: selectedLanguage,
+    });
+  };
+
+  // 속도 변경
+  const handleSpeedChange = (e) => {
+    const newSpeed = e.target.value;
+    setSpeed(newSpeed);
+
+    chrome.storage.sync.set({ speed: newSpeed });
+
+    chrome.runtime.sendMessage({
+      type: 'setRate',
+      rate: newSpeed / 10,
+    });
+  };
+
+  // 음조 변경
+  const handleTonChange = (e) => {
+    const newTon = e.target.value;
+    setTon(newTon);
+
+    chrome.storage.sync.set({ ton: newTon });
+
+    chrome.runtime.sendMessage({
+      type: 'setPitch',
+      pitch: newTon / 50,
+    });
+  };
+
+  // 볼륨 변경
+  const handleVolumeChange = (e) => {
+    const newVolume = e.target.value;
+    setVolume(newVolume);
+
+    chrome.storage.sync.set({ volume: newVolume });
+
+    chrome.runtime.sendMessage({
+      type: 'setVolume',
+      volume: newVolume / 100,
+    });
+  };
+
+  const handleToggleChange = (e) => {
+    setIsToggled(e.target.checked);
+
+    chrome.storage.sync.set({ isToggled: e.target.checked });
+  };
 
   const getBackgroundStyle = (value) => {
     return `linear-gradient(
@@ -38,30 +147,29 @@ function TTS() {
           <S.SubContainer>
             <p>활성화 여부</p>
             <S.Switch className="switch">
-              <S.Toggle
-                type="checkbox"
-                checked={isToggled}
-                onChange={(e) => setIsToggled(e.target.checked)}
-              />
+              <S.Toggle type="checkbox" checked={isToggled} onChange={handleToggleChange} />
               <S.Slider></S.Slider>
             </S.Switch>
           </S.SubContainer>
           <S.SubContainer>
-            <label htmlFor="language">목소리</label>
-            <select value={voice} onChange={(e) => setVoice(e.target.value)}>
-              <option value="option1">유나</option>
-              <option value="option2">옵션 2</option>
-              <option value="option3">옵션 3</option>
+            <label htmlFor="voice">목소리</label>
+            <select value={voice} onChange={handleVoiceChange}>
+              {voices.map((voiceOption) => (
+                <option key={voiceOption.name} value={voiceOption.name}>
+                  {voiceOption.name} - {voiceOption.lang}
+                </option>
+              ))}
             </select>
           </S.SubContainer>
+
           <S.SubContainer>
-            <label htmlFor="speed">언어</label>
-            <select value={language} onChange={(e) => setLanguage(e.target.value)}>
-              <option value="option1">한국어</option>
-              <option value="option2">옵션 2</option>
-              <option value="option3">옵션 3</option>
+            <label htmlFor="language">언어</label>
+            <select value={language} onChange={handleLanguageChange}>
+              <option value="한국어">한국어</option>
+              <option value="영어">영어</option>
             </select>
           </S.SubContainer>
+
           <S.SliderContainer>
             <label htmlFor="speed">속도</label>
             <input
@@ -70,31 +178,33 @@ function TTS() {
               max="100"
               step="1"
               value={speed}
-              onChange={(e) => setSpeed(e.target.value)}
+              onChange={handleSpeedChange}
               style={{ background: getBackgroundStyle(speed) }}
             />
           </S.SliderContainer>
+
           <S.SliderContainer>
-            <label htmlFor="tom">음조</label>
+            <label htmlFor="ton">음조</label>
             <input
               type="range"
               min="0"
               max="100"
               step="1"
               value={ton}
-              onChange={(e) => setTon(e.target.value)}
+              onChange={handleTonChange}
               style={{ background: getBackgroundStyle(ton) }}
             />
           </S.SliderContainer>
+
           <S.SliderContainer>
-            <label htmlFor="volumn">볼륨</label>
+            <label htmlFor="volume">볼륨</label>
             <input
               type="range"
               min="0"
               max="100"
               step="1"
               value={volume}
-              onChange={(e) => setVolume(e.target.value)}
+              onChange={handleVolumeChange}
               style={{ background: getBackgroundStyle(volume) }}
             />
           </S.SliderContainer>
@@ -103,4 +213,5 @@ function TTS() {
     </S.Container>
   );
 }
+
 export default TTS;
