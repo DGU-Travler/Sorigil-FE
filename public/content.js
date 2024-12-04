@@ -179,6 +179,7 @@ document.addEventListener('click', async (event) => {
         const text = await sendImageToBackend(imageURL);
 
         if (text) {
+          console.log('백엔드 응답:', text);
           chrome.runtime.sendMessage({ text });
         } else {
           console.error('translated_caption이 생성되지 않았습니다.');
