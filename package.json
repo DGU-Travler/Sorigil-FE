@@ -5,7 +5,6 @@
   "dependencies": {
     "@emotion/styled": "^11.13.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.7.9",
     "copy-webpack-plugin": "^12.0.2",
     "emotion": "^11.0.0",
     "react": "^18.3.1",
