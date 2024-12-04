@@ -119,23 +119,12 @@ document.addEventListener('click', async (event) => {
       const imageURL = element.src;
 
       try {
-        const { best_caption, translated_caption } = await sendImageToBackend(imageURL);
-        if (best_caption) {
-          chrome.runtime.sendMessage({ text: best_caption });
-        } else {
-          console.error('best_caption이 생성되지 않았습니다.');
-        }
+        const text = await sendImageToBackend(imageURL);
 
-        // translated_caption이 있을 경우 TTS로 읽기
-        if (translated_caption) {
-          chrome.runtime.sendMessage({ text: translated_caption });
+        if (text) {
+          chrome.runtime.sendMessage({ text });
         } else {
           console.error('translated_caption이 생성되지 않았습니다.');
-        }
-
-        // 만약 두 개의 텍스트가 모두 없으면 안내
-        if (!best_caption && !translated_caption) {
-          chrome.runtime.sendMessage({ text: '이미지 대체 텍스트를 생성할 수 없습니다.' });
         }
       } catch (error) {
         console.error('이미지 대체 텍스트 생성 실패:', error);
@@ -152,7 +141,10 @@ document.addEventListener('click', async (event) => {
 // 이미지 URL을 백엔드로 전송하는 함수
 async function sendImageToBackend(imageURL) {
   try {
-    const response = await fetch(imageURL);
+    // 외부 이미지를 프록시 서버를 통해 요청
+    const proxiedImageURL = `http://127.0.0.1:8000/api/proxy-image/?url=${encodeURIComponent(imageURL)}`;
+
+    const response = await fetch(proxiedImageURL);
     const blob = await response.blob();
 
     const formData = new FormData();
@@ -169,10 +161,7 @@ async function sendImageToBackend(imageURL) {
     }
 
     const data = await result.json();
-    return {
-      best_caption: data.best_caption, // 원본 텍스트 (best_caption)
-      translated_caption: data.translated_caption, // 번역된 텍스트 (translated_caption)
-    };
+    return data.translated_caption;
   } catch (error) {
     console.error('백엔드 호출 중 오류 발생:', error);
     throw new Error('이미지 대체 텍스트 생성 API 호출 실패');
