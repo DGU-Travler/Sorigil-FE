@@ -145,8 +145,8 @@ python manage.py runserver
 
 | 이름                                  | 전공                 | Email                  |
 | ------------------------------------ | ------------------- | --------------------- |
-| [박채현](https://github.com/chaehyeo-n) | 동국대학교 컴퓨터공학전공 |     |
-| [이동현](https://github.com/TRV449)  | 동국대학교 컴퓨터공학전공 |    |
+| [박채현](https://github.com/chaehyeo-n) | 동국대학교 컴퓨터공학전공 | 2022112083@dgu.ac.kr    |
+| [이동현](https://github.com/TRV449)  | 동국대학교 컴퓨터공학전공 |  donghyun0215@dgu.ac.kr   |
 | [이정선](https://github.com/leejs0823) | 동국대학교 컴퓨터공학전공 | dlwjdtjs0111@gmail.com |
-| [한동호](https://github.com/gnoddeno)  | 동국대학교 컴퓨터공학전공 |     |
+| [한동호](https://github.com/gnoddeno)  | 동국대학교 컴퓨터공학전공 |  hanran34@dgu.ac.kr   |
 
