@@ -226,105 +226,18 @@ async function sendImageToBackend(imageURL) {
   }
 }
 
-function getAPIKey() {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.get('ETRI_API_KEY', (result) => {
-      if (chrome.runtime.lastError) {
-        reject(chrome.runtime.lastError.message);
-      } else {
-        resolve(result.ETRI_API_KEY);
-      }
-    });
-  });
-}
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (message.action === 'custom-shortcut-1') {
-    console.log('content.js: 음성 명령 시작 메시지 수신');
-    try {
-      const result = await startVoiceRecognition(); // 비동기 작업
-      sendResponse({ status: 'success', result });
-    } catch (error) {
-      sendResponse({ status: 'error', message: error.message });
-    }
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.text) {
+    chrome.tts.speak(message.text, { lang: currentLang });
   }
-  return true; // 비동기 응답을 위해 true 반환
 });
 
-async function startVoiceRecognition() {
-  const ETRI_API_URL = 'http://aiopen.etri.re.kr:8000/WiseASR/Recognition';
-  const apiKey = await getAPIKey();
-
-  if (!apiKey) {
-    console.error('ETRI API 키를 가져올 수 없습니다.');
-    return;
-  }
-
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mediaRecorder = new MediaRecorder(stream);
-    let audioChunks = [];
-
-    mediaRecorder.ondataavailable = (event) => {
-      audioChunks.push(event.data);
-    };
-
-    mediaRecorder.onstop = async () => {
-      const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-      const audioBuffer = await audioBlob.arrayBuffer();
-      const audioBase64 = btoa(String.fromCharCode(...new Uint8Array(audioBuffer)));
-
-      const requestJson = {
-        argument: {
-          language_code: 'korean',
-          audio: audioBase64,
-        },
-      };
-
-      const response = await fetch(ETRI_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          Authorization: apiKey,
-        },
-        body: JSON.stringify(requestJson),
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        console.log('음성 인식 결과:', result.return_object.recognition_result);
-
-        // 결과를 화면에 표시
-        displayResult(result.return_object.recognition_result);
-      } else {
-        console.error('API 오류:', result);
-      }
-    };
-
-    mediaRecorder.start();
-    setTimeout(() => {
-      mediaRecorder.stop();
-    }, 5000); // 5초 후 녹음 종료
-  } catch (error) {
-    console.error('음성 인식 오류:', error);
-  }
-}
-
-function displayResult(text) {
-  const outputDiv = document.createElement('div');
-  outputDiv.style.position = 'fixed';
-  outputDiv.style.bottom = '10px';
-  outputDiv.style.right = '10px';
-  outputDiv.style.backgroundColor = 'white';
-  outputDiv.style.padding = '10px';
-  outputDiv.style.border = '1px solid black';
-  document.body.appendChild(outputDiv);
-  outputDiv.textContent = `인식된 텍스트: ${text}`;
-}
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'custom-shortcut-1') {
-    console.log('음성 명령 시작 메시지 수신');
-    alert('음성 명령을 시작합니다!'); // 간단한 알림
+  if (message.action === 'start-voice-command') {
+    const lang = message.lang; // background.js에서 전달된 lang 값
+
+    startListening(lang); // lang 값을 startListening에 전달
+
     sendResponse({ status: 'success' });
   }
 });
@@ -344,3 +257,76 @@ document.addEventListener('keydown', (event) => {
 document.addEventListener('keyup', (event) => {
   activeKeys.delete(event.key); // 키에서 손을 뗄 때 삭제
 });
+// 음성 인식 시작
+function startListening(lang) {
+  let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.lang = lang; // 전달된 언어 설정
+  recognition.interimResults = false; // 중간 결과 비활성화
+  recognition.maxAlternatives = 1; // 단일 결과
+
+  recognition.start();
+  console.log('음성 인식 시작됨');
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    console.log('인식된 텍스트:', transcript);
+    chrome.runtime.sendMessage({ text: transcript }); // 인식된 텍스트를 TTS로 전송
+  };
+
+  recognition.onerror = (event) => {
+    console.error('음성 인식 오류:', event.error);
+  };
+
+  recognition.onend = () => {
+    console.log('음성 인식 종료');
+  };
+
+  // 5초 후 자동 종료
+  setTimeout(() => {
+    recognition.stop();
+    console.log('마이크 자동 종료');
+    sendHtmlToApi();
+  }, 3000);
+}
+
+let isRequestInProgress = false; // 요청 진행 여부를 추적하는 변수
+
+function sendHtmlToApi() {
+  // 요청이 이미 진행 중이라면, 추가 요청을 방지
+  if (isRequestInProgress) {
+    console.log('이미 요청이 진행 중입니다.');
+    return;
+  }
+
+  isRequestInProgress = true; // 요청 시작 시 상태 변경
+
+  // 현재 페이지의 HTML을 가져옵니다.
+  const htmlContent = document.documentElement.outerHTML;
+  const file = new Blob([htmlContent], { type: 'text/plain' });
+  const formData = new FormData();
+  formData.append('html_file', file, 'page.html'); // 페이지의 HTML을 'page.html'로 파일 첨부
+  formData.append('search_term', '로그인'); // 검색어를 'search_term'으로 첨부
+
+  // API 요청 보내기 (FormData는 자동으로 'Content-Type'을 'multipart/form-data'로 설정함)
+  fetch('http://127.0.0.1:8000/api/find/', {
+    method: 'POST',
+    body: formData, // FormData를 요청의 body로 전송
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('API 응답:', data);
+      const processedHtml = data.processed_data;
+      document.body.innerHTML = processedHtml;
+
+      // 버튼 클릭 시 /login 페이지로 이동하도록 설정
+      const button = document.querySelector('button');
+      button.addEventListener('click', () => {
+        window.location.href = '/login'; // /login 페이지로 이동
+      });
+      isRequestInProgress = false; // 응답을 받으면 상태를 되돌립니다.
+    })
+    .catch((error) => {
+      console.error('API 요청 오류:', error);
+      isRequestInProgress = false; // 오류 발생 시에도 상태를 되돌립니다.
+    });
+}
