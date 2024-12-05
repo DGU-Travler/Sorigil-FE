@@ -1,7 +1,7 @@
 <h1 align="center"><img src="https://github.com/user-attachments/assets/215e5ccd-ea63-4680-bf03-fb51b88c19c6"><br/>저시력자를 위한 스크린 리더 확장 프로그램, SORIGIL</p>
-<br/>
+
 ## 📌 주요 기능
-<br/>
+
 1. **선택한 구역에 대한 음성 안내**
 2. **폼 필드 입력 음성 안내**
 3. **동적 콘텐츠 변화 안내**
@@ -10,9 +10,9 @@
 6. **음성 명령으로 기능 호출**
 7. **사용자 맞춤형 단축키 및 TTS 설정**
 
-<br/>
+
 ## ⚙️ 코드 흐름
-<br/>
+
 ### **클라이언트**
 
 #### 1. 선택한 구역에 대한 음성 안내 `highlightElement` `findReadableText` `readText`
@@ -65,7 +65,7 @@
 - `handleShortcutAction` 단축키 동작 처리 함수
 - `pressedKeys` 단축키 실행
 
-<br/>
+
 ### **클라이언트 - 서버**
 
 #### 1. 대체 텍스트 생성<br/>
@@ -94,10 +94,10 @@
 3-5. 백엔드에서 관련 기능을 찾은 후 해당 부분 HTML을 **processed_data**으로 제공<br/>
 3-6. document.body.innerHTML으로 해당 페이지 덮어쓰기<br/>
 
-<br/>
+
 ## 🛠️ 설치 방법
 
-<br/>
+
 ### **클라이언트**
 
 
@@ -108,7 +108,7 @@ npm run build
 
 브라우저에 build 된 폴더를 업로드한다.
 
-<br/>
+
 ### **백엔드**
 
 
@@ -133,15 +133,15 @@ python manage.py runserver
 ```
 
 
-<br/>
+
 ## Architecture
-<br/>
+
 ![아키텍처](https://github.com/user-attachments/assets/023864ec-92b3-4422-b145-b1f81ac4522f)
 
 
-<br/>
+
 ## Team Traveler
-<br/>
+
 
 | 이름                                  | 전공                 | Email                  |
 | ------------------------------------ | ------------------- | --------------------- |
