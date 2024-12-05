@@ -1,6 +1,4 @@
-<center>
-  ![sorigil](https://github.com/user-attachments/assets/9b3ae3a2-37df-4a08-8b01-6374a0d27bc2)
-</center>
+![sorigil](https://github.com/user-attachments/assets/215e5ccd-ea63-4680-bf03-fb51b88c19c6)
 # <center>저시력자를 위한 스크린 리더 확장 프로그램</center>
 
 ## 주요 기능
@@ -130,15 +128,14 @@ python manage.py runserver
 
 ![아키텍처](https://github.com/user-attachments/assets/023864ec-92b3-4422-b145-b1f81ac4522f)
 
-
 ## Team Traveler
 
 | 이름                                  | 전공                 | Email                  |
 | ------------------------------------ | ------------------- | --------------------- |
-| [박채현](https://github.com/haeun1107) | 동국대학교 컴퓨터공학전공 |     |
-| [이동현](https://github.com/enunsnv)   | 동국대학교 컴퓨터공학전공 |    |
-| [이정선](https://github.com/leejs0823) | 동국대학교 컴퓨터공학전공 | dlwjdtjs0111@gmail.com |
-| [한동호](https://github.com/YeahOut)   | 동국대학교 컴퓨터공학전공 |     |
+| 박채현 | 동국대학교 컴퓨터공학전공 |     |
+| 이동현  | 동국대학교 컴퓨터공학전공 |    |
+| 이정선 | 동국대학교 컴퓨터공학전공 | dlwjdtjs0111@gmail.com |
+| 한동호  | 동국대학교 컴퓨터공학전공 |     |
 
 
 
