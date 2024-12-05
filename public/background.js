@@ -165,25 +165,69 @@ chrome.commands.onCommand.addListener(async (command) => {
   }
 });
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'save-shortcuts') {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  if (message.action === 'update-shortcuts') {
     const { shortcuts } = message;
 
+    // 저장된 단축키를 업데이트
     chrome.storage.local.set({ shortcuts }, () => {
-      console.log('단축키가 저장되었습니다:', shortcuts);
-
-      // commands 업데이트
-      Object.keys(shortcuts).forEach((id) => {
-        const shortcut = shortcuts[id];
-        // 저장된 단축키를 확장 프로그램의 commands로 설정
-        chrome.commands.update({
-          name: `custom-shortcut-${id}`,
-          shortcut,
-        });
-      });
-
+      console.log('단축키가 저장되었습니다.');
       sendResponse({ status: 'success' });
     });
+    return true; // 비동기 응답을 위해 true 반환
   }
-  return true; // 비동기 응답을 위해 true 반환
+});
+let storedShortcuts = [];
+
+// 저장된 단축키를 로드
+const loadShortcuts = () => {
+  chrome.storage.local.get('shortcuts', (result) => {
+    storedShortcuts = result.shortcuts || [];
+    console.log('저장된 단축키:', storedShortcuts);
+  });
+};
+
+// 초기화 시 단축키 로드
+chrome.runtime.onInstalled.addListener(() => loadShortcuts());
+chrome.runtime.onStartup.addListener(() => loadShortcuts());
+
+// 단축키 동작 처리 함수
+const handleShortcutAction = (shortcutId) => {
+  const shortcut = storedShortcuts.find((s) => s.id === shortcutId);
+  if (shortcut) {
+    switch (shortcut.description) {
+      case '커서 크기':
+        console.log('커서 크기 조절 실행');
+        break;
+      case 'Start voice recognition':
+        console.log('음성 인식 시작 실행');
+        break;
+      case 'Volume up':
+        console.log('소리를 키웁니다.');
+        break;
+      case 'Volume down':
+        console.log('소리를 줄입니다.');
+        break;
+      default:
+        console.log('알 수 없는 동작');
+    }
+  } else {
+    console.log('등록된 동작이 없습니다:', shortcutId);
+  }
+};
+
+// 메시지 기반 단축키 처리
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'key-pressed') {
+    const { pressedKey } = message;
+    console.log('감지된 키:', pressedKey);
+
+    const shortcut = storedShortcuts.find((s) => s.shortcut === pressedKey);
+    if (shortcut) {
+      console.log(`단축키 동작 실행: ${shortcut.description}`);
+      handleShortcutAction(shortcut.id);
+    } else {
+      console.log('저장된 단축키가 없음');
+    }
+  }
 });

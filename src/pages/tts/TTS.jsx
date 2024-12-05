@@ -154,13 +154,13 @@ function TTS() {
         </S.TitleContainer>
         <S.Line />
         <S.SettingContent>
-          <S.SubContainer>
+          {/* <S.SubContainer>
             <p>활성화 여부</p>
             <S.Switch className="switch">
               <S.Toggle type="checkbox" checked={isToggled} onChange={handleToggleChange} />
               <S.Slider></S.Slider>
             </S.Switch>
-          </S.SubContainer>
+          </S.SubContainer> */}
           <S.SubContainer>
             <label htmlFor="voice">목소리</label>
             <select value={voice} onChange={handleVoiceChange}>

@@ -328,3 +328,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({ status: 'success' });
   }
 });
+
+let activeKeys = new Set();
+
+document.addEventListener('keydown', (event) => {
+  activeKeys.add(event.key);
+
+  const pressedKeys = Array.from(activeKeys).join('+'); // 누른 키 조합을 생성
+  chrome.runtime.sendMessage({
+    action: 'key-pressed',
+    key: pressedKeys,
+  });
+});
+
+document.addEventListener('keyup', (event) => {
+  activeKeys.delete(event.key); // 키에서 손을 뗄 때 삭제
+});
