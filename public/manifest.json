@@ -7,7 +7,7 @@
   "short_name": "Sorigil",
   "description": "Sorigil - Screen Reader Extension",
   "name": "Sorigil",
-  "permissions": ["storage", "tts", "tabs", "activeTab", "scripting"],
+  "permissions": ["storage", "tts", "tabs", "activeTab", "scripting", "commands"],
   "icons": {
     "128": "128.png"
   },
@@ -19,21 +19,27 @@
   "theme_color": "#000000",
   "background_color": "#ffffff",
   "commands": {
-    "start-voice-command": {
+    "custom-shortcut-0": {
+      "description": "Custom shortcut for 커서 크기",
+      "suggested_key": {
+        "default": "Ctrl+Shift+1"
+      }
+    },
+    "custom-shortcut-1": {
       "suggested_key": {
         "default": "Ctrl+Shift+X"
       },
       "description": "Start voice recognition"
     },
-    "increase-volume": {
+    "custom-shortcut-2": {
       "suggested_key": {
-        "default": "Ctrl+Shift+1"
+        "default": "Ctrl+Shift+2"
       },
       "description": "Volume up"
     },
-    "decrease-volume": {
+    "custom-shortcut-3": {
       "suggested_key": {
-        "default": "Ctrl+Shift+2"
+        "default": "Ctrl+Shift+3"
       },
       "description": "Volume down"
     }

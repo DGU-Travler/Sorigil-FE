@@ -69,7 +69,7 @@ function sendMessageToContentScript(tabId, message) {
 
 // 단축키를 눌렀을 때 녹음 시작
 chrome.commands.onCommand.addListener(async (command) => {
-  if (command === 'start-voice-command') {
+  if (command === 'custom-shortcut-1') {
     console.log('단축키 활성화, 음성 명령 시작');
     try {
       // 활성 탭 찾기
@@ -79,7 +79,7 @@ chrome.commands.onCommand.addListener(async (command) => {
           chrome.scripting.executeScript(
             { target: { tabId }, files: ['content.js'] }, // content script 주입
             () => {
-              chrome.tabs.sendMessage(tabId, { action: 'start-voice-command' }, (response) => {
+              chrome.tabs.sendMessage(tabId, { action: 'custom-shortcut-1' }, (response) => {
                 if (chrome.runtime.lastError) {
                   console.error('메시지 전달 오류:', chrome.runtime.lastError.message);
                 } else {
@@ -131,7 +131,7 @@ chrome.commands.onCommand.addListener(async (command) => {
 
     const tabId = tabs[0].id;
 
-    if (command === 'increase-volume') {
+    if (command === 'custom-shortcut-2') {
       currentVolume = Math.min(1, currentVolume + 0.1);
       await chrome.scripting.executeScript({
         target: { tabId },
@@ -145,7 +145,7 @@ chrome.commands.onCommand.addListener(async (command) => {
         args: [currentVolume],
       });
       console.log('소리를 키웁니다. 현재 볼륨:', currentVolume);
-    } else if (command === 'decrease-volume') {
+    } else if (command === 'custom-shortcut-3') {
       currentVolume = Math.max(0, currentVolume - 0.1);
       await chrome.scripting.executeScript({
         target: { tabId },
@@ -163,4 +163,27 @@ chrome.commands.onCommand.addListener(async (command) => {
   } catch (error) {
     console.error('오류 발생:', error.message);
   }
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'save-shortcuts') {
+    const { shortcuts } = message;
+
+    chrome.storage.local.set({ shortcuts }, () => {
+      console.log('단축키가 저장되었습니다:', shortcuts);
+
+      // commands 업데이트
+      Object.keys(shortcuts).forEach((id) => {
+        const shortcut = shortcuts[id];
+        // 저장된 단축키를 확장 프로그램의 commands로 설정
+        chrome.commands.update({
+          name: `custom-shortcut-${id}`,
+          shortcut,
+        });
+      });
+
+      sendResponse({ status: 'success' });
+    });
+  }
+  return true; // 비동기 응답을 위해 true 반환
 });

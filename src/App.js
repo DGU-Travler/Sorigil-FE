@@ -17,7 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Popup />} />
           <Route path="/help" element={<Help />} />
-          <Route path="/setting" element={<Setting />} />
+          <Route path="/set" element={<Setting />} />
           <Route path="/tts" element={<TTS />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
