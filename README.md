@@ -66,7 +66,7 @@
 
 ### 클라이언트 - 서버
 
-1. 대체 텍스트 생성
+1. 대체 텍스트 생성<br/>
    1-1. 클라이언트가 img 클릭<br/>
    1-2. 읽을 수 있는 텍스트가 없는 경우 `proxiedImageURL`로 외부 이미지를 프록시 서버를 통해 요청<br/>
    1-3. 이미지 주소를 `blob`을 사용해 image file로 변환<br/>
@@ -74,13 +74,13 @@
    1-5. 백엔드에서 ai로 이미지 대체 텍스트 생성<br/>
    1-6. 백엔드에서 response 받은 **translated_caption**를 TTS로 출력<br/>
 
-2. 폼 필드 레이블 생성
+2. 폼 필드 레이블 생성<br/>
    2-1. 클라이언트가 form 클릭<br/>
    2-2. 폼 필드 내의 input, textarea에 value, placeholder, ariaLabel이 있는지 확인<br/>
    2-3. 관련 내용이 없다면 폼 태그 내부 내용을 formHtml으로 읽어 백엔드 서버로 formData 전송<br/>
    2-4. 백엔드에서 response 받은 **data**를 TTS로 출력<br/>
 
-3. 음성 명령 기능 호출
+3. 음성 명령 기능 호출<br/>
    3-1. 클라이언트가 음성 명령 단축키 클릭 후 마이크 활성화가 되면, 찾고자 하는 기능 음성 명령<br/>
    3-1. `SpeechRecognition`으로 음성 명령 인식<br/>
    3-2. `sendHtmlToApi` 함수에서 현재 페이지 HTML 가져오기<br/>
