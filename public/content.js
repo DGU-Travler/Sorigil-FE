@@ -305,9 +305,44 @@ function sendHtmlToApi() {
       console.log('API 응답:', data);
       const processedHtml = `
       <html>
-        <body><button class="sc-blHHSb jrgCsi">로그인</button>
-      </html>`;
+        <head>
+          <style>
+            body {
+              height: 100vh; /* 화면 전체 높이 */
+              display: flex;
+              justify-content: center; /* 수평 가운데 정렬 */
+              margin: 0; /* 기본 여백 제거 */
+            }
+            button {
+              width: 100%;
+              padding: 10px;
+              font-size: 18px;
+              background-color: #007bff;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+              transition: background-color 0.3s;
+
+              &:hover {
+                background-color: #0056b3;
+              }
+            }
+          </style>
+        </head>
+        <body> 
+          <button>로그인</button> 
+        </body> 
+      </html>
+    `;
+
       document.body.innerHTML = processedHtml;
+
+      // 버튼 클릭 시 /login 페이지로 이동하도록 설정
+      const button = document.querySelector('button');
+      button.addEventListener('click', () => {
+        window.location.href = '/login'; // /login 페이지로 이동
+      });
       isRequestInProgress = false; // 응답을 받으면 상태를 되돌립니다.
     })
     .catch((error) => {
