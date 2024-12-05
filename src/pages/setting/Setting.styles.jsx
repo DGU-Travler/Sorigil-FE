@@ -103,6 +103,15 @@ export const SubContainer = styled.div`
   }
 `;
 
+export const ShortcutBox = styled.div`
+  padding: 5px 10px;
+  border: ${(props) => (props.isEditing ? '2px solid blue' : '1px solid #ccc')};
+  background: ${(props) => (props.isEditing ? '#f0f8ff' : 'white')};
+  cursor: pointer;
+  min-width: 120px;
+  text-align: center;
+`;
+
 export const FunctionContainer = styled.div`
   display: grid;
   grid-template-columns: 2fr 5fr;
@@ -113,7 +122,7 @@ export const FunctionContainer = styled.div`
     color: ${({ theme }) => theme.color.gray5};
     text-align: right;
   }
-  div {
+  input {
     border-radius: 5px;
     border: 1px solid ${({ theme }) => theme.color.gray4};
     display: flex;
