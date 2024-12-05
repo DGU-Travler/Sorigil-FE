@@ -238,7 +238,7 @@ function getAPIKey() {
   });
 }
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (message.action === 'custom-shortcut-3') {
+  if (message.action === 'custom-shortcut-1') {
     console.log('content.js: 음성 명령 시작 메시지 수신');
     try {
       const result = await startVoiceRecognition(); // 비동기 작업
