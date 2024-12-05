@@ -323,14 +323,16 @@ function sendHtmlToApi() {
         <head>
           <style>
             body {
-              height: 100vh; /* 화면 전체 높이 */
+              height: 80vh; /* 화면 전체 높이 */
               display: flex;
+              align-items: center;
               justify-content: center; /* 수평 가운데 정렬 */
               margin: 0; /* 기본 여백 제거 */
             }
             button {
-              width: 100%;
-              padding: 10px;
+              width: 60%;
+              
+              padding: 30px;
               font-size: 18px;
               background-color: #007bff;
               color: white;
