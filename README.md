@@ -1,7 +1,10 @@
-# 저시력자를 위한 스크린 리더 확장 프로그램
+<center>
+  ![sorigil](https://github.com/user-attachments/assets/86fa9be7-0760-4b8e-b3aa-334762b7556b)
+  </center>
+# <center>저시력자를 위한 스크린 리더 확장 프로그램</center>
 
 ## 주요 기능
-
+--------------------
 1. 선택한 구역에 대한 음성 안내
 2. 폼 필드 입력 음성 안내
 3. 동적 콘텐츠 변화 안내
@@ -11,7 +14,7 @@
 7. 사용자 맞춤형 단축키 및 TTS 설정
 
 ## 코드 흐름
-
+--------------------
 ### 클라이언트
 
 #### 1. 선택한 구역에 대한 음성 안내 `highlightElement` `findReadableText` `readText`
@@ -93,7 +96,7 @@
 3-6. document.body.innerHTML으로 해당 페이지 덮어쓰기<br/>
 
 ## 프론트 세팅
-
+------------------
 ```commandline
 npm install
 npm run build
@@ -102,7 +105,7 @@ npm run build
 브라우저에 build 된 폴더를 업로드한다.
 
 ## 백엔드 세팅
-
+------------------
 1. 가상환경 생성
 
 ```commandline
@@ -122,3 +125,20 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
+
+## Architecture
+------------------
+![아키텍처](https://github.com/user-attachments/assets/023864ec-92b3-4422-b145-b1f81ac4522f)
+
+
+## Team Traveler
+-------------------
+| 이름                                  | 전공                 | Email                  |
+| ------------------------------------ | ------------------- | --------------------- |
+| [박채현](https://github.com/haeun1107) | 동국대학교 컴퓨터공학전공 |     |
+| [이동현](https://github.com/enunsnv)   | 동국대학교 컴퓨터공학전공 |    |
+| [이정선](https://github.com/leejs0823) | 동국대학교 컴퓨터공학전공 | dlwjdtjs0111@gmail.com |
+| [한동호](https://github.com/YeahOut)   | 동국대학교 컴퓨터공학전공 |     |
+
+
+
