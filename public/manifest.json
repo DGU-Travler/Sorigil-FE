@@ -22,7 +22,7 @@
     "custom-shortcut-0": {
       "description": "Custom shortcut for 커서 크기",
       "suggested_key": {
-        "default": "Ctrl+Shift+1"
+        "default": "Ctrl+Shift+0"
       }
     },
     "custom-shortcut-1": {
@@ -33,13 +33,13 @@
     },
     "custom-shortcut-2": {
       "suggested_key": {
-        "default": "Ctrl+Shift+2"
+        "default": "Ctrl+Shift+1"
       },
       "description": "Volume up"
     },
     "custom-shortcut-3": {
       "suggested_key": {
-        "default": "Ctrl+Shift+3"
+        "default": "Ctrl+Shift+2"
       },
       "description": "Volume down"
     }
